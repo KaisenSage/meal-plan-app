@@ -5,19 +5,22 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
 export default function PaymentSuccessPage() {
-  const [verifying, setVerifying] = useState(true);
+  const [verifyingPlan, setVerifyingPlan] = useState<string | null>(null);
   const searchParams = useSearchParams();
   const router = useRouter();
 
   useEffect(() => {
     const verifyPayment = async () => {
       const transaction_id = searchParams.get('transaction_id');
-      
-      if (!transaction_id) {
-        toast.error('No transaction ID found');
+      const plan = searchParams.get('plan'); // Get plan type (weekly, monthly, yearly)
+
+      if (!transaction_id || !plan) {
+        toast.error('Invalid payment details');
         router.push('/subscribe');
         return;
       }
+
+      setVerifyingPlan(plan); // Set the correct plan as "Processing"
 
       try {
         const response = await fetch(`/api/payment/verify?transaction_id=${transaction_id}`);
@@ -25,7 +28,6 @@ export default function PaymentSuccessPage() {
 
         if (data.success) {
           toast.success('Payment successful!');
-          // Redirect to dashboard or appropriate page
           router.push('/dashboard');
         } else {
           toast.error('Payment verification failed');
@@ -36,23 +38,20 @@ export default function PaymentSuccessPage() {
         toast.error('Failed to verify payment');
         router.push('/subscribe');
       } finally {
-        setVerifying(false);
+        setVerifyingPlan(null); // Reset verifying state after verification
       }
     };
 
     verifyPayment();
   }, [searchParams, router]);
 
-  if (verifying) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Verifying your payment...</h1>
-          <p>Please wait while we confirm your payment.</p>
-        </div>
+  return (
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="text-center">
+        {verifyingPlan === 'weekly' && <p>Processing Weekly Payment...</p>}
+        {verifyingPlan === 'monthly' && <p>Processing Monthly Payment...</p>}
+        {verifyingPlan === 'yearly' && <p>Processing Yearly Payment...</p>}
       </div>
-    );
-  }
-
-  return null;
-} 
+    </div>
+  );
+}

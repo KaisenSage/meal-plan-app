@@ -1,37 +1,30 @@
-"use client";
+'use client';
 
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-import { useMutation } from "@tanstack/react-query";
+import { useState } from "react";
 import { availablePlans } from "@/lib/plans";
 import toast, { Toaster } from "react-hot-toast";
 
-// Types
-type CheckoutResponse = {
-  url: string;
-};
+interface CheckoutResponse {
+  url?: string;
+  error?: string;
+}
 
-type CheckoutError = {
-  error: string;
-};
-
-// Flutterwave checkout API call
-const initiateCheckout = async ({
-  planType,
-  userId,
-  email,
-}: {
-  planType: string;
-  userId: string;
-  email: string;
-}): Promise<CheckoutResponse> => {
+const initiateCheckout = async (
+  planType: string,
+  userId: string,
+  email: string
+): Promise<string> => {
   const response = await fetch("/api/checkout", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { 
+      "Content-Type": "application/json"
+    },
     body: JSON.stringify({ planType, userId, email }),
   });
 
-  const data = await response.json();
+  const data: CheckoutResponse = await response.json();
 
   if (!response.ok) {
     throw new Error(data.error || "Checkout failed");
@@ -41,39 +34,57 @@ const initiateCheckout = async ({
     throw new Error("No payment URL received");
   }
 
-  return data;
+  return data.url;
 };
 
 export default function SubscribePage() {
   const { user } = useUser();
   const router = useRouter();
+  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
 
-  const userId = user?.id;
-  const email = user?.emailAddresses?.[0]?.emailAddress || "";
-
-  const mutation = useMutation<CheckoutResponse, Error, { planType: string }>({
-    mutationFn: async ({ planType }) => {
-      if (!userId) throw new Error("Please sign in to subscribe");
-      return initiateCheckout({ planType, userId, email });
-    },
-    onMutate: () => {
-      toast.loading("Preparing checkout...", { id: "checkout" });
-    },
-    onSuccess: (data) => {
-      toast.success("Redirecting to payment...", { id: "checkout" });
-      window.location.href = data.url;
-    },
-    onError: (error) => {
-      toast.error(error.message || "Checkout failed", { id: "checkout" });
-    },
-  });
-
-  const handleSubscribe = (planType: string) => {
-    if (!userId) {
+  const handleSubscribe = async (planType: string) => {
+    if (!user?.id || !user?.emailAddresses?.[0]?.emailAddress) {
       router.push("/sign-up");
       return;
     }
-    mutation.mutate({ planType });
+
+    try {
+      setLoadingPlan(planType);
+      toast.loading("Preparing checkout...", { id: "checkout" });
+
+      const response = await fetch("/api/checkout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          planType,
+          userId: user.id,
+          email: user.emailAddresses[0].emailAddress,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Payment initialization failed");
+      }
+
+      if (!data.url) {
+        throw new Error("No payment URL received");
+      }
+
+      toast.success("Redirecting to payment...", { id: "checkout" });
+      window.location.href = data.url;
+    } catch (error) {
+      console.error("Payment error:", error);
+      toast.error(
+        error instanceof Error ? error.message : "Payment failed",
+        { id: "checkout" }
+      );
+    } finally {
+      setLoadingPlan(null);
+    }
   };
 
   return (
@@ -141,9 +152,9 @@ export default function SubscribePage() {
                   : "bg-emerald-100 text-emerald-700 hover:bg-emerald-200"
               } mt-8 block w-full py-3 px-6 border border-transparent rounded-md text-center font-medium disabled:bg-gray-400 disabled:cursor-not-allowed`}
               onClick={() => handleSubscribe(plan.interval)}
-              disabled={mutation.isPending}
+              disabled={loadingPlan === plan.interval}
             >
-              {mutation.isPending
+              {loadingPlan === plan.interval
                 ? "Processing..."
                 : `Subscribe ${plan.name}`}
             </button>
