@@ -1,3 +1,4 @@
+// components/spinner.tsx
 export const Spinner = () => (
   <svg
     className="animate-spin h-5 w-5 text-emerald-500"
