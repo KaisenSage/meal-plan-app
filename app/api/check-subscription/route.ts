@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { Prisma } from '@prisma/client';
+import { Prisma } from "@prisma/client";
 
 export async function GET(req: NextRequest) {
   try {
@@ -11,47 +11,43 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Missing userId" }, { status: 400 });
     }
 
-    try {
-      // Test database connection
-      await db.$queryRaw`SELECT 1`;
-    } catch (connectionError) {
-      console.error("Database connection error:", connectionError);
-      return NextResponse.json(
-        { error: "Database connection failed" },
-        { status: 503 }
-      );
-    }
+    // Test DB connection
+    await db.$queryRaw`SELECT 1`;
 
-    try {
-      // Get user's profile from database
-      const profile = await db.profile.findUnique({
-        where: { userId },
-        select: { subscriptionActive: true },
+    const profile = await db.profile.findUnique({
+      where: { userId },
+      select: {
+        subscriptionActive: true,
+        subscriptionTier: true, // ✅ include this
+      },
+    });
+
+    if (!profile) {
+      await db.profile.create({
+        data: {
+          userId,
+          email: "", // You may want to get this from Clerk
+          subscriptionActive: false,
+          subscriptionTier: null,
+        },
       });
-
-      // If no profile exists, create one
-      if (!profile) {
-        const newProfile = await db.profile.create({
-          data: {
-            userId,
-            email: "", // You might want to get this from Clerk
-            subscriptionActive: false,
-          },
-        });
-        return NextResponse.json({ subscriptionActive: false });
-      }
 
       return NextResponse.json({
-        subscriptionActive: profile.subscriptionActive,
+        subscription: {
+          subscription_active: false,
+          subscription_tier: null,
+        },
       });
-    } catch (dbError) {
-      if (dbError instanceof Prisma.PrismaClientKnownRequestError) {
-        console.error("Prisma error:", dbError.code, dbError.message);
-      }
-      throw dbError;
     }
+
+    return NextResponse.json({
+      subscription: {
+        subscription_active: profile.subscriptionActive,
+        subscription_tier: profile.subscriptionTier,
+      },
+    });
   } catch (error) {
-    console.error("Check subscription error:", error);
+    console.error("Subscription check error:", error);
     return NextResponse.json(
       { error: "Failed to check subscription" },
       { status: 500 }
