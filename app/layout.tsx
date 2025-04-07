@@ -4,6 +4,8 @@ import "./globals.css";
 import NavBar from "@/Components/navbar";
 import {ClerkProvider} from '@clerk/nextjs'
 import { ReactQueryClientProvider } from "@/Components/react-query-client-provider";
+import { Inter } from 'next/font/google';
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -12,6 +14,11 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+});
+
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
@@ -26,10 +33,8 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50 text-gray-900`}
-      >
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} ${inter.className} antialiased bg-gray-50 text-gray-900`}>
+      <body>
         <ReactQueryClientProvider>
          <NavBar />
          <div className="max-w-7xl mx-auto pt-16 p-4 min-h-screen">

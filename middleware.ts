@@ -1,77 +1,81 @@
 import { NextResponse } from "next/server";
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
-// Define routes that don't need authentication
 const isPublicRoute = createRouteMatcher([
   "/",
   "/sign-up(.*)",
   "/subscribe(.*)",
-  "/api/payment",
-  "/api/checkout", // ✅ Add this line
+  "/api/checkout(.*)",
+  "/api/payment(.*)",
+  "/payment/callback(.*)",
+  "/api/check-subscription(.*)",
+  "/mealplan(.*)",
+  "/profile(.*)"
 ]);
 
 const isSignUpRoute = createRouteMatcher(["/sign-up(.*)"]);
 const isMealPlanRoute = createRouteMatcher(["/mealplan(.*)"]);
-const isProfileRoute = createRouteMatcher(["/profile(.*)"]);
 
 export default clerkMiddleware(async (auth, req) => {
-  const userAuth = await auth();
-  const { userId } = userAuth;
-  const { pathname, origin } = req.nextUrl;
+  try {
+    const userAuth = await auth();
+    const { userId } = userAuth;
+    const { pathname, origin } = req.nextUrl;
 
-  console.log("Middleware Info: ", userId, pathname, origin);
+    console.log("Middleware Info:", { userId, pathname, origin });
 
-  // Allow public access to webhook & payment routes
-  if (
-    pathname.startsWith("/api/payment") ||
-    pathname.startsWith("/payment/callback") ||
-    pathname.startsWith("/api/flutterwave-webhook") ||
-    pathname === "/api/check-subscription"
-  ) {
-    return NextResponse.next();
-  }
+    // Allow public routes without authentication
+    if (isPublicRoute(req)) {
+      return NextResponse.next();
+    }
 
-  // Redirect unauthenticated users to sign-up page
-  if (!isPublicRoute(req) && !userId) {
-    return NextResponse.redirect(new URL("/sign-up", origin));
-  }
+    // Redirect to sign-up if not authenticated
+    if (!userId) {
+      return NextResponse.redirect(new URL("/sign-up", origin));
+    }
 
-  // Redirect logged-in users away from sign-up
-  if (isSignUpRoute(req) && userId) {
-    return NextResponse.redirect(new URL("/mealplan", origin));
-  }
+    // Redirect authenticated users away from sign-up
+    if (isSignUpRoute(req) && userId) {
+      return NextResponse.redirect(new URL("/mealplan", origin));
+    }
 
-  // Protect /mealplan and /profile if subscription is inactive
-  if ((isMealPlanRoute(req) || isProfileRoute(req)) && userId) {
-    try {
-      const checkSubRes = await fetch(`${origin}/api/check-subscription?userId=${userId}`, {
-        method: "GET",
-        headers: {
-          cookie: req.headers.get("cookie") || "",
-        },
-      });
+    // Check subscription for meal plan access
+    if (isMealPlanRoute(req)) {
+      try {
+        const checkSubRes = await fetch(
+          `${origin}/api/check-subscription?userId=${userId}`,
+          {
+            method: "GET",
+            headers: {
+              cookie: req.headers.get("cookie") || "",
+            },
+          }
+        );
 
-      if (checkSubRes.ok) {
+        if (!checkSubRes.ok) {
+          console.error("Subscription check failed:", await checkSubRes.text());
+          return NextResponse.redirect(new URL("/subscribe", origin));
+        }
+
         const data = await checkSubRes.json();
         if (!data.subscriptionActive) {
           return NextResponse.redirect(new URL("/subscribe", origin));
         }
-      } else {
-        console.warn("check-subscription failed response");
+      } catch (error) {
+        console.error("Error checking subscription:", error);
         return NextResponse.redirect(new URL("/subscribe", origin));
       }
-    } catch (error) {
-      console.error("Error calling /api/check-subscription:", error);
-      return NextResponse.redirect(new URL("/subscribe", origin));
     }
-  }
 
-  return NextResponse.next();
+    return NextResponse.next();
+  } catch (error) {
+    console.error("Middleware error:", error);
+    return NextResponse.redirect(new URL("/sign-up", req.nextUrl.origin));
+  }
 });
 
 export const config = {
   matcher: [
-    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
-    "/(api|trpc)(.*)",
+    "/((?!_next/static|_next/image|favicon.ico).*)",
   ],
 };

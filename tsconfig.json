@@ -13,14 +13,14 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
+    "forceConsistentCasingInFileNames": true,
     "plugins": [
       {
         "name": "next"
       }
     ],
     "paths": {
-      "@/*": ["./*"],
-      "@/components/*": ["app/components/*"]
+      "@/*": ["./*"]
     },
     "baseUrl": "."
   },
