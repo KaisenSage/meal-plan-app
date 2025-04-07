@@ -93,27 +93,37 @@ export default function HomePage() {
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4 justify-center">
           <div>
             <h6 className="uppercase font-bold">
-              <a href="#!" className="text-white">About us</a>
+              <a href="/about" className="text-white hover:underline">
+                About Us
+              </a>
             </h6>
           </div>
           <div>
             <h6 className="uppercase font-bold">
-              <a href="#!" className="text-white">Products</a>
+              <a href="/products" className="text-white hover:underline">
+                Products
+              </a>
             </h6>
           </div>
           <div>
             <h6 className="uppercase font-bold">
-              <a href="#!" className="text-white">Awards</a>
+              <a href="/awards" className="text-white hover:underline">
+                Awards
+              </a>
             </h6>
           </div>
           <div>
             <h6 className="uppercase font-bold">
-              <a href="#!" className="text-white">Help</a>
+              <a href="/help" className="text-white hover:underline">
+                Help
+              </a>
             </h6>
           </div>
           <div>
             <h6 className="uppercase font-bold">
-              <a href="#!" className="text-white">Contact</a>
+              <a href="/contact" className="text-white hover:underline">
+                Contact
+              </a>
             </h6>
           </div>
         </div>
@@ -122,14 +132,69 @@ export default function HomePage() {
       <hr className="my-8 border-white/30" />
 
       <section className="mb-10 text-white">
-        <div className="max-w-3xl mx-auto text-center text-sm text-white/90">
-        
-        </div>
-      </section>
+  <div className="max-w-3xl mx-auto text-center text-sm text-white/90">
+    <p className="mb-4"></p>
+    <div className="flex justify-center space-x-6 text-lg">
+      <a
+        href="https://facebook.com/sagecorp"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="hover:text-white/80 transition"
+      >
+        <i className="fab fa-facebook-f"></i>
+      </a>
+      <a
+        href="https://twitter.com/sagecorp"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="hover:text-white/80 transition"
+      >
+        <i className="fab fa-twitter"></i>
+      </a>
+      <a
+        href="https://instagram.com/sagecorp"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="hover:text-white/80 transition"
+      >
+        <i className="fab fa-instagram"></i>
+      </a>
+      <a
+        href="https://linkedin.com/company/sagecorp"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="hover:text-white/80 transition"
+      >
+        <i className="fab fa-linkedin-in"></i>
+      </a>
+      <a
+        href="https://github.com/sagecorp"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="hover:text-white/80 transition"
+      >
+        <i className="fab fa-github"></i>
+      </a>
+    </div>
+  </div>
+</section>
+
 
       <section className="mb-5 flex justify-center space-x-6">
-        {["facebook", "twitter", "instagram", "linkedin", "github"].map((platform) => (
-          <a href="#" key={platform} className="text-white hover:text-white/80 transition">
+        {[
+          { platform: "facebook", url: "https://facebook.com/sagecorp" },
+          { platform: "twitter", url: "https://twitter.com/sagecorp" },
+          { platform: "instagram", url: "https://instagram.com/sagecorp" },
+          { platform: "linkedin", url: "https://linkedin.com/company/sagecorp" },
+          { platform: "github", url: "https://github.com/sagecorp" },
+        ].map(({ platform, url }) => (
+          <a
+            href={url}
+            key={platform}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-white hover:text-white/80 transition"
+          >
             <i className={`fab fa-${platform}`}></i>
           </a>
         ))}
@@ -138,12 +203,13 @@ export default function HomePage() {
 
     <div className="text-center p-3 bg-black/20">
       © {new Date().getFullYear()} Copyright{" "}
-      <a className="text-white font-semibold" href="https://mdbootstrap.com/">
-        Sagecorp
+      <a className="text-white font-semibold" href="https://sagecorp.com">
+        SAGECORP
       </a>
     </div>
   </footer>
 </div>
+
 
     </div>
   );

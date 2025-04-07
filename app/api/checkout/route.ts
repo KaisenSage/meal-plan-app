@@ -25,13 +25,13 @@ export async function POST(req: Request) {
     // Get amount based on plan type (in kobo/cents)
     let amount;
     switch (planType) {
-      case "week":
+      case "weekly":
         amount = "9.99";
         break;
-      case "month":
+      case "monthly":
         amount = "39.99";
         break;
-      case "year":
+      case "yearly":
         amount = "299.99";
         break;
       default:

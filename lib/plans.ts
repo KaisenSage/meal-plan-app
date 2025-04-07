@@ -11,7 +11,7 @@ export const availablePlans: Plan[] = [
     {
         id: "basic",
         name: "Basic Plan",
-        interval: "monthly",
+        interval: "weekly",
         amount: 9.99,
         currency: "USD",
         features: ["Basic meal plans", "Weekly updates", "Email support"],
@@ -27,8 +27,8 @@ export const availablePlans: Plan[] = [
     {
         id: "pro",
         name: "Pro Plan",
-        interval: "monthly",
-        amount: 29.99,
+        interval: "yearly",
+        amount: 299.99,
         currency: "USD",
         features: [
             "Professional meal plans",
