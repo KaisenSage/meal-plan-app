@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import NavBar from "@/Components/navbar";
+import NavBar from "@/components/navbar";
 import { ClerkProvider } from "@clerk/nextjs";
-import { ReactQueryClientProvider } from "@/Components/react-query-client-provider";
+import { ReactQueryClientProvider } from "@/components/react-query-client-provider";
 import { Inter } from "next/font/google";
 
 const geistSans = Geist({
