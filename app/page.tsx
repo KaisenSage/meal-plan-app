@@ -1,7 +1,6 @@
 // app/page.tsx (HomePage)
 "use client";
 
-
 import Link from "next/link";
 
 export default function HomePage() {
@@ -21,98 +20,131 @@ export default function HomePage() {
         </Link>
       </section>
 
-      {/* How It Works Section */}
-      <section id="how-it-works" className="mb-12">
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-semibold">How It Works</h2>
-          <p className="mt-2 text-gray-600">
-            Follow these simple steps to get your personalized meal plan
-          </p>
-        </div>
-        <div className="flex flex-col md:flex-row justify-center items-start space-y-8 md:space-y-0 md:space-x-8">
-          {/* Step 1 */}
-          <div className="flex flex-col items-center">
-            <div className="bg-emerald-500 text-white rounded-full h-16 w-16 flex items-center justify-center mb-4">
-              {/* Icon for Step 1 */}
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-8 w-8"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14v7m-3-3h6"
-                />
-              </svg>
-            </div>
-            <h3 className="text-xl font-medium mb-2">Create an Account</h3>
-            <p className="text-center text-gray-600">
-              Sign up or sign in to access your personalized meal plans.
-            </p>
-          </div>
+ {/* How It Works Section */}
+<section className="bg-white py-20">
+  <div className="max-w-6xl mx-auto px-6 text-center">
+    <h2 className="text-4xl font-bold text-gray-800 mb-4">How It Works</h2>
+    <p className="text-lg text-gray-500 mb-12">
+      AI-powered meal planning that saves time, reduces stress, and helps you hit your goals.
+    </p>
 
-          {/* Step 2 */}
-          <div className="flex flex-col items-center">
-            <div className="bg-emerald-500 text-white rounded-full h-16 w-16 flex items-center justify-center mb-4">
-              {/* Icon for Step 2 */}
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-8 w-8"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 17v-6a2 2 0 012-2h2a2 2 0 012 2v6"
-                />
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 12h6"
-                />
-              </svg>
-            </div>
-            <h3 className="text-xl font-medium mb-2">Set Your Preferences</h3>
-            <p className="text-center text-gray-600">
-              Input your dietary preferences and goals to tailor your meal
-              plans.
-            </p>
-          </div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+      {/* Step 1 */}
+      <div className="bg-gray-50 p-8 rounded-xl shadow hover:shadow-md transition">
+        <div className="text-emerald-500 text-4xl font-bold mb-4">1</div>
+        <h3 className="text-xl font-semibold mb-2">Create Your Profile</h3>
+        <p className="text-gray-600">
+          Share your dietary needs, fitness goals, and preferences with ease.
+        </p>
+      </div>
 
-          {/* Step 3 */}
-          <div className="flex flex-col items-center">
-            <div className="bg-emerald-500 text-white rounded-full h-16 w-16 flex items-center justify-center mb-4">
-              {/* Icon for Step 3 */}
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-8 w-8"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M5 13l4 4L19 7"
-                />
-              </svg>
-            </div>
-            <h3 className="text-xl font-medium mb-2">Receive Your Meal Plan</h3>
-            <p className="text-center text-gray-600">
-              Get your customized meal plan delivered weekly to your account.
-            </p>
+      {/* Step 2 */}
+      <div className="bg-gray-50 p-8 rounded-xl shadow hover:shadow-md transition">
+        <div className="text-emerald-500 text-4xl font-bold mb-4">2</div>
+        <h3 className="text-xl font-semibold mb-2">AI Generates Your Plan</h3>
+        <p className="text-gray-600">
+          Our intelligent system designs a weekly meal plan tailored just for you.
+        </p>
+      </div>
+
+      {/* Step 3 */}
+      <div className="bg-gray-50 p-8 rounded-xl shadow hover:shadow-md transition">
+        <div className="text-emerald-500 text-4xl font-bold mb-4">3</div>
+        <h3 className="text-xl font-semibold mb-2">Follow Your Plan</h3>
+        <p className="text-gray-600">
+          Enjoy delicious meals, simple recipes, and an organized grocery list.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+{/* MealPlan Pro Section */}
+<section className="bg-gray-100 py-20">
+  <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-10">
+    {/* Text Content */}
+    <div className="md:w-1/2">
+      <h2 className="text-4xl font-bold text-gray-800 mb-4">
+        MealPlan <span className="text-emerald-600">Pro</span>
+      </h2>
+      <p className="text-gray-600 mb-6">
+        For health & fitness professionals. Streamline meal planning, deliver
+        results, and scale your business faster.
+      </p>
+
+    </div>
+
+    {/* Image */}
+    <div className="md:w-1/2">
+      <img
+        src="https://www.eatthismuch.com/_app/immutable/assets/ios-app-eatthismuch.C4RTd9d9.webp"
+        alt="MealPlan Pro Mobile"
+        className="w-full rounded-xl shadow-md"
+      />
+    </div>
+  </div>
+</section>
+
+{/* Footer Section */}
+<div className="my-5">
+  <footer className="text-center text-white bg-emerald-400">
+    <div className="px-6 py-10">
+      <section className="mb-10 text-white">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 justify-center">
+          <div>
+            <h6 className="uppercase font-bold">
+              <a href="#!" className="text-white">About us</a>
+            </h6>
+          </div>
+          <div>
+            <h6 className="uppercase font-bold">
+              <a href="#!" className="text-white">Products</a>
+            </h6>
+          </div>
+          <div>
+            <h6 className="uppercase font-bold">
+              <a href="#!" className="text-white">Awards</a>
+            </h6>
+          </div>
+          <div>
+            <h6 className="uppercase font-bold">
+              <a href="#!" className="text-white">Help</a>
+            </h6>
+          </div>
+          <div>
+            <h6 className="uppercase font-bold">
+              <a href="#!" className="text-white">Contact</a>
+            </h6>
           </div>
         </div>
       </section>
+
+      <hr className="my-8 border-white/30" />
+
+      <section className="mb-10 text-white">
+        <div className="max-w-3xl mx-auto text-center text-sm text-white/90">
+        
+        </div>
+      </section>
+
+      <section className="mb-5 flex justify-center space-x-6">
+        {["facebook", "twitter", "instagram", "linkedin", "github"].map((platform) => (
+          <a href="#" key={platform} className="text-white hover:text-white/80 transition">
+            <i className={`fab fa-${platform}`}></i>
+          </a>
+        ))}
+      </section>
+    </div>
+
+    <div className="text-center p-3 bg-black/20">
+      © {new Date().getFullYear()} Copyright{" "}
+      <a className="text-white font-semibold" href="https://mdbootstrap.com/">
+        Sagecorp
+      </a>
+    </div>
+  </footer>
+</div>
+
     </div>
   );
 }

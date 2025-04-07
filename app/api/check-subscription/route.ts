@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { Prisma } from "@prisma/client";
 
 export async function GET(req: NextRequest) {
   try {
@@ -18,7 +17,7 @@ export async function GET(req: NextRequest) {
       where: { userId },
       select: {
         subscriptionActive: true,
-        subscriptionTier: true, // ✅ include this
+        subscriptionTier: true,
       },
     });
 
@@ -34,16 +33,16 @@ export async function GET(req: NextRequest) {
 
       return NextResponse.json({
         subscription: {
-          subscription_active: false,
-          subscription_tier: null,
+          subscriptionActive: false,
+          subscriptionTier: null,
         },
       });
     }
 
     return NextResponse.json({
       subscription: {
-        subscription_active: profile.subscriptionActive,
-        subscription_tier: profile.subscriptionTier,
+        subscriptionActive: profile.subscriptionActive,
+        subscriptionTier: profile.subscriptionTier,
       },
     });
   } catch (error) {
