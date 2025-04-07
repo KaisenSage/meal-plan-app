@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { Spinner } from "@/components/spinner";
+import { Spinner } from "@/Components/spinner";
 import { useUser } from "@clerk/nextjs";
 
 interface DailyMealPlan {
