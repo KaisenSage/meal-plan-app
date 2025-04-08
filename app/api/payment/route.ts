@@ -1,39 +1,46 @@
-// app/api/payment/route.ts
-import { NextResponse } from "next/server";
-import { initializePayment, createPaymentConfig } from "@/lib/flutterwave";
+'use client';
 
-export async function POST(req: Request) {
-  try {
-    const body = await req.json();
+import { useEffect, useState } from 'react';
+import Spinner from './spinner';
 
-    if (!body.email || !body.interval) {
-      return NextResponse.json({
-        error: "Missing required fields",
-        details: "Email and interval are required"
-      }, { status: 400 });
-    }
-
-    const paymentConfig = createPaymentConfig(
-      body.interval,
-      body.email,
-      body.name
-    );
-
-    const response = await initializePayment(paymentConfig);
-
-    if (response.status === "success") {
-      return NextResponse.json({ success: true, data: response.data });
-    } else {
-      return NextResponse.json({
-        error: "Payment initialization failed",
-        details: response
-      }, { status: 400 });
-    }
-  } catch (error) {
-    console.error("Payment error:", error);
-    return NextResponse.json({
-      error: "Payment initialization failed",
-      details: error instanceof Error ? error.message : "Unknown error"
-    }, { status: 500 });
+declare global {
+  interface Window {
+    FlutterwaveCheckout: any;
   }
 }
+
+export default function PaymentPage() {
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const existingScript = document.getElementById("flutterwave-script");
+    if (!existingScript) {
+      const script = document.createElement("script");
+      script.src = "https://checkout.flutterwave.com/v3.js";
+      script.id = "flutterwave-script";
+      document.body.appendChild(script);
+    }
+  }, []);
+
+  const handlePayment = async () => {
+    setLoading(true);
+    const res = await fetch("/api/payment", {
+      method: "POST",
+      body: JSON.stringify({
+        email: "test@example.com",
+        name: "Kaisen Sage",
+        interval: "monthly"
+      }),
+    });
+
+    const data = await res.json();
+    setLoading(false);
+
+    if (!res.ok) {
+      alert(data.error || "An error occurred");
+      return;
+    }
+
+    const { link } = data.data; // Flutterwave redirect link
+    if (link) {
+      window.location.href = link; // Redirect

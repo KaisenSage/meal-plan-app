@@ -5,6 +5,7 @@ import NavBar from "@/Components/navbar";
 import { ClerkProvider } from "@clerk/nextjs";
 import { ReactQueryClientProvider } from "@/Components/react-query-client-provider";
 import { Inter } from "next/font/google";
+import Script from "next/script"; // ✅ Add this
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,8 +38,14 @@ export default function RootLayout({
         lang="en"
         className={`${geistSans.variable} ${geistMono.variable} ${inter.className} antialiased bg-gray-50 text-gray-900`}
       >
-        <head>
-          {/* ✅ Font Awesome CDN */}
+        <body>
+          {/* ✅ Flutterwave script */}
+          <Script
+            src="https://checkout.flutterwave.com/v3.js"
+            strategy="afterInteractive"
+          />
+
+          {/* ✅ Font Awesome script */}
           <link
             rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
@@ -46,8 +53,7 @@ export default function RootLayout({
             crossOrigin="anonymous"
             referrerPolicy="no-referrer"
           />
-        </head>
-        <body>
+
           <ReactQueryClientProvider>
             <NavBar />
             <div className="max-w-7xl mx-auto pt-16 p-4 min-h-screen">
