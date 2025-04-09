@@ -5,37 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { availablePlans } from "@/lib/plans";
 import toast, { Toaster } from "react-hot-toast";
-
-interface CheckoutResponse {
-  url?: string;
-  error?: string;
-}
-
-const initiateCheckout = async (
-  planType: string,
-  userId: string,
-  email: string
-): Promise<string> => {
-  const response = await fetch("/api/checkout", {
-    method: "POST",
-    headers: { 
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ planType, userId, email }),
-  });
-
-  const data: CheckoutResponse = await response.json();
-
-  if (!response.ok) {
-    throw new Error(data.error || "Checkout failed");
-  }
-
-  if (!data.url) {
-    throw new Error("No payment URL received");
-  }
-
-  return data.url;
-};
+import { makePayment } from "@/lib/flutterwave";
 
 export default function SubscribePage() {
   const { user } = useUser();
@@ -43,43 +13,28 @@ export default function SubscribePage() {
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
 
   const handleSubscribe = async (planType: string) => {
-    if (!user?.id || !user?.emailAddresses?.[0]?.emailAddress) {
+    if (!user?.id || !user?.emailAddresses?.[0]?.emailAddress || !user.fullName) {
       router.push("/sign-up");
       return;
     }
 
     try {
       setLoadingPlan(planType);
-      toast.loading("Preparing checkout...", { id: "checkout" });
+      toast.loading("Initializing payment...", { id: "checkout" });
 
-      const response = await fetch("/api/checkout", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          planType,
-          userId: user.id,
-          email: user.emailAddresses[0].emailAddress,
-        }),
+      const selectedPlan = availablePlans.find((plan) => plan.interval === planType);
+      if (!selectedPlan) throw new Error("Invalid plan selected");
+
+      await makePayment({
+        amount: selectedPlan.amount,
+        email: user.emailAddresses[0].emailAddress,
+        name: user.fullName,
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Payment initialization failed");
-      }
-
-      if (!data.url) {
-        throw new Error("No payment URL received");
-      }
-
-      toast.success("Redirecting to payment...", { id: "checkout" });
-      window.location.href = data.url;
+      toast.success("Payment successful!", { id: "checkout" });
     } catch (error) {
-      console.error("Payment error:", error);
       toast.error(
-        error instanceof Error ? error.message : "Payment failed",
+        error instanceof Error ? error.message : String(error),
         { id: "checkout" }
       );
     } finally {
@@ -95,8 +50,7 @@ export default function SubscribePage() {
           Pricing
         </h2>
         <p className="max-w-3xl mx-auto mt-4 text-xl text-center">
-          Get started on our weekly plan or upgrade to monthly or yearly when
-          you're ready.
+          Get started on our weekly plan or upgrade to monthly or yearly when you're ready.
         </p>
       </div>
 
@@ -117,9 +71,7 @@ export default function SubscribePage() {
                 <span className="text-5xl font-extrabold tracking-tight">
                   ${plan.amount}
                 </span>
-                <span className="ml-1 text-xl font-semibold">
-                  /{plan.interval}
-                </span>
+                <span className="ml-1 text-xl font-semibold">/{plan.interval}</span>
               </p>
               <p className="mt-6">{plan.description}</p>
               <ul role="list" className="mt-6 space-y-4">
