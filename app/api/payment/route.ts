@@ -6,7 +6,7 @@ export async function POST(req: Request) {
   try {
     const response = await fetch(`https://api.flutterwave.com/v3/transactions/${transactionId}/verify`, {
       headers: {
-        Authorization: `Bearer ${process.env.FLW_SECRET_KEY}`,
+        Authorization: `Bearer ${process.env.FLUTTERWAVE_SECRET_KEY}`, // ✅ use backticks here
         "Content-Type": "application/json",
       },
     });
@@ -19,6 +19,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ success: false });
   } catch (error) {
+    console.error("Verification error:", error);
     return NextResponse.json({ success: false });
   }
 }
