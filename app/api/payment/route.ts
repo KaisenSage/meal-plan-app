@@ -1,46 +1,24 @@
-'use client';
+import { NextResponse } from "next/server";
 
-import { useEffect, useState } from 'react';
-import Spinner from './spinner';
+export async function POST(req: Request) {
+  const { transactionId } = await req.json();
 
-declare global {
-  interface Window {
-    FlutterwaveCheckout: any;
-  }
-}
-
-export default function PaymentPage() {
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    const existingScript = document.getElementById("flutterwave-script");
-    if (!existingScript) {
-      const script = document.createElement("script");
-      script.src = "https://checkout.flutterwave.com/v3.js";
-      script.id = "flutterwave-script";
-      document.body.appendChild(script);
-    }
-  }, []);
-
-  const handlePayment = async () => {
-    setLoading(true);
-    const res = await fetch("/api/payment", {
-      method: "POST",
-      body: JSON.stringify({
-        email: "test@example.com",
-        name: "Kaisen Sage",
-        interval: "monthly"
-      }),
+  try {
+    const response = await fetch(`https://api.flutterwave.com/v3/transactions/${transactionId}/verify`, {
+      headers: {
+        Authorization: `Bearer ${process.env.FLUTTERWAVE_SECRET_KEY}`,
+        "Content-Type": "application/json",
+      },
     });
 
-    const data = await res.json();
-    setLoading(false);
+    const data = await response.json();
 
-    if (!res.ok) {
-      alert(data.error || "An error occurred");
-      return;
+    if (data.status === "success" && data.data.status === "successful") {
+      return NextResponse.json({ success: true });
     }
 
-    const { link } = data.data; // Flutterwave redirect link
-    if (link) {
-      window.location.href = link; // Redirect
+    return NextResponse.json({ success: false });
+  } catch (error) {
+    return NextResponse.json({ success: false });
+  }
+}
