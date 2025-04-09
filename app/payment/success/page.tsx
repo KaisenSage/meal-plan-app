@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
-export default function PaymentSuccessPage() {
+function PaymentSuccessContent() {
   const [verifyingPlan, setVerifyingPlan] = useState<string | null>(null);
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -47,11 +47,20 @@ export default function PaymentSuccessPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center">
-      <div className="text-center">
+      <div className="text-center text-lg font-medium">
         {verifyingPlan === 'weekly' && <p>Processing Weekly Payment...</p>}
         {verifyingPlan === 'monthly' && <p>Processing Monthly Payment...</p>}
         {verifyingPlan === 'yearly' && <p>Processing Yearly Payment...</p>}
+        {!verifyingPlan && <p>Verifying your payment...</p>}
       </div>
     </div>
+  );
+}
+
+export default function PaymentSuccessPage() {
+  return (
+    <Suspense fallback={<div className="text-center py-20">Loading payment info...</div>}>
+      <PaymentSuccessContent />
+    </Suspense>
   );
 }
