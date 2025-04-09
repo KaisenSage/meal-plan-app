@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { availablePlans } from "@/lib/plans";
 import toast, { Toaster } from "react-hot-toast";
-import { makePayment } from "@/lib/flutterwave";
 
 export default function SubscribePage() {
   const { user } = useUser();
