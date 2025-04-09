@@ -187,4 +187,32 @@ interface FlutterwaveConfig {
       },
     };
   };
+  export const makePayment = async (
+    planType: string,
+    userId: string,
+    email: string
+  ): Promise<string> => {
+    try {
+      const plan = getPlanConfigFromType(planType);
+  
+      const paymentResponse = await FlutterwaveService.initializePayment({
+        amount: plan.amount,
+        currency: plan.currency,
+        email,
+        name: email.split('@')[0],
+      });
+  
+      if (
+        paymentResponse.status === "success" &&
+        paymentResponse.data?.link
+      ) {
+        return paymentResponse.data.link;
+      }
+  
+      throw new Error(paymentResponse.message || "Unable to start payment.");
+    } catch (error) {
+      console.error("makePayment error:", error);
+      throw new Error("Payment initialization failed");
+    }
+  };
   
