@@ -3,8 +3,9 @@
 import { useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
+import { Suspense } from 'react';
 
-export default function PaymentCallbackPage() {
+function PaymentCallbackContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -35,4 +36,12 @@ export default function PaymentCallbackPage() {
       </div>
     </div>
   );
-} 
+}
+
+export default function PaymentCallbackPage() {
+  return (
+    <Suspense fallback={<div className="text-center py-20">Loading...</div>}>
+      <PaymentCallbackContent />
+    </Suspense>
+  );
+}
