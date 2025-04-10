@@ -1,26 +1,25 @@
 import { NextResponse } from "next/server";
+import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
-import { currentUser } from "@clerk/nextjs/server";
 
 export async function GET() {
   try {
-    const clerkUser = await currentUser();
-    if (!clerkUser?.id) {
+    const { userId } = auth(); // This is sync, no need to await
+
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Fetch user profile via Prisma
     const profile = await prisma.profile.findUnique({
-      where: { userId: clerkUser.id },
+      where: { userId },
     });
 
-    // If no profile found, return null
     if (!profile) {
       return NextResponse.json({ subscription: null });
     }
 
     return NextResponse.json({ subscription: profile });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error fetching subscription:", error);
     return NextResponse.json(
       { error: "Failed to fetch subscription details." },
