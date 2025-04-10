@@ -1,18 +1,17 @@
 import { NextResponse } from "next/server";
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
-// ✅ Add ALL public paths here (including API)
+// ✅ Public paths
 const isPublicRoute = createRouteMatcher([
   "/",
   "/sign-up(.*)",
+  "/sign-in(.*)",
   "/subscribe(.*)",
   "/api/checkout(.*)",
   "/api/payment(.*)",
   "/payment/callback(.*)",
   "/api/check-subscription(.*)",
-  "/api/profile/subscription-status(.*)", // ✅ ADD THIS
-  "/mealplan(.*)",
-  "/profile(.*)",
+  "/api/profile/subscription-status(.*)",
 ]);
 
 const isSignUpRoute = createRouteMatcher(["/sign-up(.*)"]);
@@ -20,31 +19,30 @@ const isMealPlanRoute = createRouteMatcher(["/mealplan(.*)"]);
 
 export default clerkMiddleware(async (auth, req) => {
   try {
-    const userAuth = await auth();
-    const { userId } = userAuth;
+    const { userId } = await auth();
     const { pathname, origin } = req.nextUrl;
 
     console.log("🛡️ Middleware Info:", { userId, pathname, origin });
 
-    // ✅ Allow public routes without auth
-    if (isPublicRoute(pathname)) {
+    // ✅ Allow public routes
+    if (isPublicRoute(req)) {
       return NextResponse.next();
     }
 
-    // ❌ Unauthenticated user: force sign-up
+    // ❌ Redirect unauthenticated users to sign-up
     if (!userId) {
       return NextResponse.redirect(new URL("/sign-up", origin));
     }
 
-    // 🚫 Prevent signed-in users from visiting /sign-up
-    if (isSignUpRoute(pathname) && userId) {
+    // 🔄 Prevent signed-in users from seeing sign-up again
+    if (isSignUpRoute(req) && userId) {
       return NextResponse.redirect(new URL("/mealplan", origin));
     }
 
-    // 🔐 Meal Plan protected route – requires active subscription
-    if (isMealPlanRoute(pathname)) {
+    // 🔐 Mealplan requires an active subscription
+    if (isMealPlanRoute(req)) {
       try {
-        const checkSubRes = await fetch(
+        const checkRes = await fetch(
           `${origin}/api/check-subscription?userId=${userId}`,
           {
             method: "GET",
@@ -54,30 +52,28 @@ export default clerkMiddleware(async (auth, req) => {
           }
         );
 
-        if (!checkSubRes.ok) {
-          console.error("⚠️ Subscription check failed:", await checkSubRes.text());
+        if (!checkRes.ok) {
+          console.error("⚠️ Subscription check failed:", await checkRes.text());
           return NextResponse.redirect(new URL("/subscribe", origin));
         }
 
-        const data = await checkSubRes.json();
+        const data = await checkRes.json();
         if (!data.subscriptionActive) {
           return NextResponse.redirect(new URL("/subscribe", origin));
         }
-      } catch (error) {
-        console.error("❌ Error checking subscription:", error);
+      } catch (err) {
+        console.error("❌ Subscription API error:", err);
         return NextResponse.redirect(new URL("/subscribe", origin));
       }
     }
 
     return NextResponse.next();
   } catch (error) {
-    console.error("🛑 Middleware error:", error);
+    console.error("🛑 Global middleware error:", error);
     return NextResponse.redirect(new URL("/sign-up", req.nextUrl.origin));
   }
 });
 
 export const config = {
-  matcher: [
-    "/((?!_next/static|_next/image|favicon.ico).*)",
-  ],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 };
