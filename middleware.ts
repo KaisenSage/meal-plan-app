@@ -1,8 +1,7 @@
-// middleware.ts
-
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
+// ✅ Add ALL public paths here (including API)
 const isPublicRoute = createRouteMatcher([
   "/",
   "/sign-up(.*)",
@@ -11,9 +10,9 @@ const isPublicRoute = createRouteMatcher([
   "/api/payment(.*)",
   "/payment/callback(.*)",
   "/api/check-subscription(.*)",
+  "/api/profile/subscription-status(.*)", // ✅ ADD THIS
   "/mealplan(.*)",
   "/profile(.*)",
-  "/api/profile/subscription-status(.*)", // ✅ add this so it works
 ]);
 
 const isSignUpRoute = createRouteMatcher(["/sign-up(.*)"]);
@@ -28,22 +27,22 @@ export default clerkMiddleware(async (auth, req) => {
     console.log("🛡️ Middleware Info:", { userId, pathname, origin });
 
     // ✅ Allow public routes without auth
-    if (isPublicRoute(req)) {
+    if (isPublicRoute(pathname)) {
       return NextResponse.next();
     }
 
-    // 🔐 Redirect unauthenticated users
+    // ❌ Unauthenticated user: force sign-up
     if (!userId) {
       return NextResponse.redirect(new URL("/sign-up", origin));
     }
 
-    // 🚫 Prevent signed-in users from going back to sign-up
-    if (isSignUpRoute(req) && userId) {
+    // 🚫 Prevent signed-in users from visiting /sign-up
+    if (isSignUpRoute(pathname) && userId) {
       return NextResponse.redirect(new URL("/mealplan", origin));
     }
 
-    // ✅ Check subscription status for restricted routes
-    if (isMealPlanRoute(req)) {
+    // 🔐 Meal Plan protected route – requires active subscription
+    if (isMealPlanRoute(pathname)) {
       try {
         const checkSubRes = await fetch(
           `${origin}/api/check-subscription?userId=${userId}`,
@@ -56,7 +55,7 @@ export default clerkMiddleware(async (auth, req) => {
         );
 
         if (!checkSubRes.ok) {
-          console.error("❌ Subscription check failed:", await checkSubRes.text());
+          console.error("⚠️ Subscription check failed:", await checkSubRes.text());
           return NextResponse.redirect(new URL("/subscribe", origin));
         }
 
@@ -65,7 +64,7 @@ export default clerkMiddleware(async (auth, req) => {
           return NextResponse.redirect(new URL("/subscribe", origin));
         }
       } catch (error) {
-        console.error("⚠️ Error checking subscription:", error);
+        console.error("❌ Error checking subscription:", error);
         return NextResponse.redirect(new URL("/subscribe", origin));
       }
     }
@@ -79,7 +78,6 @@ export default clerkMiddleware(async (auth, req) => {
 
 export const config = {
   matcher: [
-    // Include everything except Next static assets
     "/((?!_next/static|_next/image|favicon.ico).*)",
   ],
 };

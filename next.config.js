@@ -1,7 +1,5 @@
-import type { NextConfig } from "next";
-
 /** @type {import('next').NextConfig} */
-const nextConfig: NextConfig = {
+const nextConfig = {
   images: {
     remotePatterns: [
       {
@@ -13,13 +11,11 @@ const nextConfig: NextConfig = {
     ],
   },
   typescript: {
-    // ✅ Allow production builds to succeed even if there are type errors
     ignoreBuildErrors: true,
   },
   eslint: {
-    // ✅ Ignore ESLint errors during production builds
     ignoreDuringBuilds: true,
   },
 };
 
-export default nextConfig;
+module.exports = nextConfig; // ✅ NO Clerk wrapper needed
