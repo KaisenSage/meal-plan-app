@@ -1,10 +1,11 @@
+// ✅ Correct and Clerk-authenticated route
 import { NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
+import { getAuth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
-    const { userId } = auth(); // This is sync, no need to await
+    const { userId } = getAuth(req);
 
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -14,12 +15,8 @@ export async function GET() {
       where: { userId },
     });
 
-    if (!profile) {
-      return NextResponse.json({ subscription: null });
-    }
-
-    return NextResponse.json({ subscription: profile });
-  } catch (error) {
+    return NextResponse.json({ subscription: profile ?? null });
+  } catch (error: any) {
     console.error("Error fetching subscription:", error);
     return NextResponse.json(
       { error: "Failed to fetch subscription details." },
