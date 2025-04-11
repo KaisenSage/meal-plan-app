@@ -15,7 +15,7 @@ const isPublicRoute = createRouteMatcher([
 ]);
 
 const isSignUpRoute = createRouteMatcher(["/sign-up(.*)"]);
-const isMealPlanRoute = createRouteMatcher(["/mealplan(.*)"]);
+const isMealPlanRoute = createRouteMatcher(["/meal-plan(.*)"]);
 
 export default clerkMiddleware(async (auth, req) => {
   try {
@@ -36,7 +36,7 @@ export default clerkMiddleware(async (auth, req) => {
 
     // 🔄 Prevent signed-in users from seeing sign-up again
     if (isSignUpRoute(req) && userId) {
-      return NextResponse.redirect(new URL("/mealplan", origin));
+      return NextResponse.redirect(new URL("/meal-plan", origin));
     }
 
     // 🔐 Mealplan requires an active subscription
