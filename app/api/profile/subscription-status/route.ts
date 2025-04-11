@@ -1,25 +1,45 @@
-// ✅ Correct and Clerk-authenticated route
+// app/api/profile/subscription-status/route.ts
+import { currentUser } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
-import { getAuth } from "@clerk/nextjs/server";
-import { prisma } from "@/lib/prisma";
+import { db } from "@/lib/prisma"; // ← you're using `db`, not `prisma` directly
 
-export async function GET(req: Request) {
+export async function GET() {
   try {
-    const { userId } = getAuth(req);
+    console.log("🔐 Fetching current user...");
+    const user = await currentUser();
 
-    if (!userId) {
+    if (!user) {
+      console.warn("⚠️ No Clerk user found.");
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const profile = await prisma.profile.findUnique({
-      where: { userId },
+    console.log("✅ Clerk user ID:", user.id);
+
+    const profile =  db.profile.findUnique({
+      where: { userId: user.id },
     });
 
-    return NextResponse.json({ subscription: profile ?? null });
-  } catch (error: any) {
-    console.error("Error fetching subscription:", error);
+    if (!profile) {
+      console.warn("❗ No profile found for user:", user.id);
+      return NextResponse.json({ subscription: null }, { status: 200 });
+    }
+
+    console.log("📦 Subscription profile found:", profile);
+
+    return NextResponse.json({
+      subscription: {
+        subscription_active: profile.subscriptionActive,
+        subscription_tier: profile.subscriptionTier,
+        next_payment_date: profile.nextPaymentDate,
+      },
+    });
+  } catch (error) {
+    console.error("❌ Internal server error:", error);
     return NextResponse.json(
-      { error: "Failed to fetch subscription details." },
+      {
+        error: "Internal server error",
+        message: error instanceof Error ? error.message : "Unknown error",
+      },
       { status: 500 }
     );
   }

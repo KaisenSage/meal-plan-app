@@ -11,7 +11,6 @@ export async function POST(req: Request) {
     if (!planType || !userId || !email) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
-
     if (!process.env.FLW_SECRET_KEY) {
       console.error("❌ Flutterwave secret key is missing");
       return NextResponse.json({ error: "Payment configuration error" }, { status: 500 });
