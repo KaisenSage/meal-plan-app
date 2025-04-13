@@ -56,7 +56,7 @@ export default clerkMiddleware(async (auth, req) => {
 
         if (!checkRes.ok) {
           console.error("⚠️ Subscription check failed:", await checkRes.text());
-          return NextResponse.redirect(new URL("/mealplan", origin));
+          return NextResponse.redirect(new URL("/", origin));
         }
 
         const data = await checkRes.json();
