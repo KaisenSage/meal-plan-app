@@ -51,7 +51,7 @@ export default function SubscribePage() {
           Pricing
         </h2>
         <p className="max-w-3xl mx-auto mt-4 text-xl text-center">
-          Get started on our weekly plan or upgrade to monthly or yearly when you're ready.
+          Get started on our weekly plan or upgrade to monthly or yearly when you are ready.
         </p>
       </div>
 

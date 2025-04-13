@@ -35,7 +35,7 @@ export default function NavBar() {
 
           {isSignedIn && (
             <Link
-              href="/meal-plan"
+              href="/mealplan"
               className="text-gray-700 hover:text-emerald-600 transition-colors font-medium"
             >
               Mealplan

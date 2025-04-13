@@ -6,7 +6,6 @@ export interface Plan {
     currency: string;
     features: string[];
     description: string;
-    isPopular: boolean;
   }
   
   export const availablePlans: Plan[] = [

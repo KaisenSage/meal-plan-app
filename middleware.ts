@@ -12,10 +12,11 @@ const isPublicRoute = createRouteMatcher([
   "/payment/callback(.*)",
   "/api/check-subscription(.*)",
   "/api/profile/subscription-status(.*)",
+  "/mealplan(.*)",
 ]);
 
 const isSignUpRoute = createRouteMatcher(["/sign-up(.*)"]);
-const isMealPlanRoute = createRouteMatcher(["/meal-plan(.*)"]);
+const isMealPlanRoute = createRouteMatcher(["/mealplan(.*)"]);
 
 export default clerkMiddleware(async (auth, req) => {
   try {
@@ -33,10 +34,11 @@ export default clerkMiddleware(async (auth, req) => {
     if (!userId) {
       return NextResponse.redirect(new URL("/sign-up", origin));
     }
+    
 
     // 🔄 Prevent signed-in users from seeing sign-up again
     if (isSignUpRoute(req) && userId) {
-      return NextResponse.redirect(new URL("/meal-plan", origin));
+      return NextResponse.redirect(new URL("/mealplan", origin));
     }
 
     // 🔐 Mealplan requires an active subscription
@@ -54,16 +56,16 @@ export default clerkMiddleware(async (auth, req) => {
 
         if (!checkRes.ok) {
           console.error("⚠️ Subscription check failed:", await checkRes.text());
-          return NextResponse.redirect(new URL("/subscribe", origin));
+          return NextResponse.redirect(new URL("/mealplan", origin));
         }
 
         const data = await checkRes.json();
         if (!data.subscriptionActive) {
-          return NextResponse.redirect(new URL("/subscribe", origin));
+          return NextResponse.redirect(new URL("/", origin));
         }
       } catch (err) {
         console.error("❌ Subscription API error:", err);
-        return NextResponse.redirect(new URL("/subscribe", origin));
+        return NextResponse.redirect(new URL("/", origin));
       }
     }
 
