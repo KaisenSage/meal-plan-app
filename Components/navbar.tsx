@@ -1,5 +1,3 @@
-// app/components/NavBar.js
-
 "use client";
 import Link from "next/link";
 import Image from "next/image";
@@ -21,6 +19,7 @@ export default function NavBar() {
             width={50}
             height={50}
             className="cursor-pointer"
+            priority
           />
         </Link>
 
@@ -43,6 +42,7 @@ export default function NavBar() {
           )}
 
           <SignedOut>
+            {/* Subscribe Link */}
             <Link
               href="/subscribe"
               className="text-gray-700 hover:text-emerald-600 transition-colors font-medium"
@@ -52,7 +52,7 @@ export default function NavBar() {
           </SignedOut>
 
           <SignedIn>
-            {/* Profile Image */}
+            {/* Profile Section */}
             <Link href="/profile">
               <Image
                 src={user?.imageUrl || "/default-avatar.png"}
@@ -63,17 +63,19 @@ export default function NavBar() {
               />
             </Link>
 
+            {/* Sign Out Button */}
             <SignOutButton>
-              <button className="ml-2 px-4 py-1.5 bg-emerald-500 text-white text-sm rounded-lg hover:bg-emerald-600 transition">
+              <button className="px-6 py-2 border border-emerald-500 text-emerald-500 font-medium rounded-full hover:bg-emerald-100 transition-all">
                 Sign Out
               </button>
             </SignOutButton>
           </SignedIn>
 
           <SignedOut>
+            {/* Sign Up Button */}
             <Link
               href="/sign-up"
-              className="px-4 py-1.5 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition"
+              className="px-6 py-2 border border-emerald-500 text-emerald-500 font-medium rounded-full hover:bg-emerald-100 transition-all"
             >
               Sign Up
             </Link>

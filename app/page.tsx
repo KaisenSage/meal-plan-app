@@ -2,8 +2,8 @@
 "use client";
 
 import Link from "next/link";
-
-
+import './Footer.css';
+import { FaFacebookF, FaTwitter, FaInstagram } from 'react-icons/fa';
 export default function HomePage() {
   return (
     <div className="px-4 py-8 sm:py-12 lg:py-16 max-w-7xl mx-auto">
@@ -88,130 +88,73 @@ export default function HomePage() {
 
 {/* Footer Section */}
 <div className="my-5">
-  <footer className="text-center text-white bg-emerald-400">
-    <div className="px-6 py-10">
-      <section className="mb-10 text-white">
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 justify-center">
-          <div>
-            <h6 className="uppercase font-bold">
-              <a href="/about" className="text-white hover:underline">
-                About Us
-              </a>
-            </h6>
-          </div>
-          <div>
-            <h6 className="uppercase font-bold">
-              <a href="/products" className="text-white hover:underline">
-                Products
-              </a>
-            </h6>
-          </div>
-          <div>
-            <h6 className="uppercase font-bold">
-              <a href="/awards" className="text-white hover:underline">
-                Awards
-              </a>
-            </h6>
-          </div>
-          <div>
-            <h6 className="uppercase font-bold">
-              <a href="/help" className="text-white hover:underline">
-                Help
-              </a>
-            </h6>
-          </div>
-          <div>
-            <h6 className="uppercase font-bold">
-              <a href="/contact" className="text-white hover:underline">
-                Contact
-              </a>
-            </h6>
-          </div>
-        </div>
-      </section>
+<footer className="footer">
+      <div className="footer-container">
 
-      <hr className="my-8 border-white/30" />
-
-      <section className="mb-10 text-white">
-  <div className="max-w-3xl mx-auto text-center text-sm text-white/90">
-    <p className="mb-4"></p>
-    <div className="flex justify-center space-x-6 text-lg">
-      <a
-        href="https://facebook.com/sagecorp"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="hover:text-white/80 transition"
-      >
-        <i className="fab fa-facebook-f"></i>
-      </a>
-      <a
-        href="https://twitter.com/sagecorp"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="hover:text-white/80 transition"
-      >
-        <i className="fab fa-twitter"></i>
-      </a>
-      <a
-        href="https://instagram.com/sagecorp"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="hover:text-white/80 transition"
-      >
-        <i className="fab fa-instagram"></i>
-      </a>
-      <a
-        href="https://linkedin.com/company/sagecorp"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="hover:text-white/80 transition"
-      >
-        <i className="fab fa-linkedin-in"></i>
-      </a>
-      <a
-        href="https://github.com/sagecorp"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="hover:text-white/80 transition"
-      >
-        <i className="fab fa-github"></i>
-      </a>
-    </div>
-  </div>
-</section>
-
-
-      <section className="mb-5 flex justify-center space-x-6">
-        {[
-          { platform: "facebook", url: "https://facebook.com/sagecorp" },
-          { platform: "twitter", url: "https://twitter.com/sagecorp" },
-          { platform: "instagram", url: "https://instagram.com/sagecorp" },
-          { platform: "linkedin", url: "https://linkedin.com/company/sagecorp" },
-          { platform: "github", url: "https://github.com/sagecorp" },
-        ].map(({ platform, url }) => (
-          <a
-            href={url}
-            key={platform}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-white hover:text-white/80 transition"
-          >
-            <i className={`fab fa-${platform}`}></i>
-          </a>
-        ))}
-      </section>
-    </div>
-
-    <div className="text-center p-3 bg-black/20">
-      © {new Date().getFullYear()} Copyright{" "}
-      <a className="text-white font-semibold" href="https://sagecorp.com">
-        SAGECORP
-      </a>
-    </div>
-  </footer>
+        {/* Column 1 */}
+        <div className="footer-column">
+  <h3 className="footer-heading">For Users</h3>
+  <ul className="footer-list">
+    <li><a href="/how-it-works" className="footer-link">How It Works</a></li>
+    <li><a href="/plans-and-pricing" className="footer-link">Plans & Pricing</a></li>
+    <li><a href="/recipes" className="footer-link">Explore Recipes</a></li>
+    <li><a href="/dietary-preferences" className="footer-link">Dietary Preferences</a></li>
+  </ul>
 </div>
 
+{/* Column 2 */}
+<div className="footer-column">
+  <h3 className="footer-heading">For Professionals</h3>
+  <ul className="footer-list">
+    <li><a href="/mealplan-pro" className="footer-link">MealPlan Pro</a></li>
+    <li><a href="/tools-for-nutritionists" className="footer-link">Tools for Nutritionists</a></li>
+    <li><a href="/business-solutions" className="footer-link">Business Solutions</a></li>
+    <li><a href="/partner-with-us" className="footer-link">Partner With Us</a></li>
+  </ul>
+</div>
 
+{/* Column 3 */}
+<div className="footer-column">
+  <h3 className="footer-heading">Resources</h3>
+  <ul className="footer-list">
+    <li><a href="/help" className="footer-link">Help & Support</a></li>
+    <li><a href="/faq" className="footer-link">FAQs</a></li>
+    <li><a href="/blog" className="footer-link">Blog</a></li>
+    <li><a href="/health-tips" className="footer-link">Health Tips</a></li>
+  </ul>
+</div>
+
+{/* Column 4 */}
+<div className="footer-column">
+  <h3 className="footer-heading">Company</h3>
+  <ul className="footer-list">
+    <li><a href="/about-us" className="footer-link">About Us</a></li>
+    <li><a href="/careers" className="footer-link">Careers</a></li>
+    <li><a href="/media" className="footer-link">Media</a></li>
+    <li><a href="/contact" className="footer-link">Contact Us</a></li>
+  </ul>
+</div>
+      </div>
+
+      {/* Bottom Section */}
+      <div className="footer-bottom">
+        <div className="footer-socials">
+        <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="footer-social-link">
+            <FaFacebookF size={24} />
+          </a>
+          <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="footer-social-link">
+            <FaTwitter size={24} />
+          </a>
+          <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="footer-social-link">
+            <FaInstagram size={24} />
+          </a>
+        </div>
+        <p className="footer-copyright">
+          &copy; {new Date().getFullYear()} MealPlan. All rights reserved.
+        </p>
+      </div>
+    </footer>
+</div>
     </div>
   );
 }

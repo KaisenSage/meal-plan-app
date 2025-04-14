@@ -1,4 +1,4 @@
-// components/MealPlanDashboard.tsx
+
 "use client";
 
 import { useState } from "react";
