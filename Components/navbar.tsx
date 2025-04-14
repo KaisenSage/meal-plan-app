@@ -8,13 +8,13 @@ export default function NavBar() {
 
   if (!isLoaded) return null;
 
-  const buttonStyles =
-    "flex items-center justify-center px-4 py-2 border border-emerald-500 text-emerald-500 font-medium rounded-full hover:bg-emerald-100 transition-all text-sm h-10";
+  const emeraldButtonStyles =
+    "flex items-center justify-center px-4 py-2 bg-emerald-500 text-white font-medium rounded-full hover:bg-emerald-600 transition-all text-sm";
 
   return (
     <nav className="fixed top-0 left-0 w-full bg-white shadow-md z-50">
       <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-        {/* Logo */}
+        {/* Logo - Always Visible */}
         <Link href="/">
           <Image
             src="/logo.png"
@@ -68,13 +68,13 @@ export default function NavBar() {
 
             {/* Sign Out Button */}
             <SignOutButton>
-              <button className={buttonStyles}>Sign Out</button>
+              <button className={emeraldButtonStyles}>Sign Out</button>
             </SignOutButton>
           </SignedIn>
 
           <SignedOut>
             {/* Sign Up Button */}
-            <Link href="/sign-up" className={buttonStyles}>
+            <Link href="/sign-up" className={emeraldButtonStyles}>
               Sign Up
             </Link>
           </SignedOut>
