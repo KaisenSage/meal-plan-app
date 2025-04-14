@@ -9,7 +9,7 @@ export default function NavBar() {
   if (!isLoaded) return null;
 
   const buttonStyles =
-    "px-6 py-2 border border-emerald-500 text-emerald-500 font-medium rounded-full hover:bg-emerald-100 transition-all text-sm";
+    "flex items-center justify-center px-4 py-2 border border-emerald-500 text-emerald-500 font-medium rounded-full hover:bg-emerald-100 transition-all text-sm h-10";
 
   return (
     <nav className="fixed top-0 left-0 w-full bg-white shadow-md z-50">
