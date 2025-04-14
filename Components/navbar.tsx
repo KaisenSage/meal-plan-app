@@ -65,7 +65,7 @@ export default function NavBar() {
 
             {/* Sign Out Button */}
             <SignOutButton>
-              <button className="px-6 py-2 border border-emerald-500 text-emerald-500 font-medium rounded-full hover:bg-emerald-100 transition-all">
+              <button className="px-6 py-2 border border-emerald-500 text-emerald-500 font-medium rounded-full hover:bg-emerald-100 transition-all text-sm">
                 Sign Out
               </button>
             </SignOutButton>
@@ -75,7 +75,7 @@ export default function NavBar() {
             {/* Sign Up Button */}
             <Link
               href="/sign-up"
-              className="px-6 py-2 border border-emerald-500 text-emerald-500 font-medium rounded-full hover:bg-emerald-100 transition-all"
+              className="px-6 py-2 border border-emerald-500 text-emerald-500 font-medium rounded-full hover:bg-emerald-100 transition-all text-sm"
             >
               Sign Up
             </Link>
