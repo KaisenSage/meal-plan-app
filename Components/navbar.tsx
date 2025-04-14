@@ -8,6 +8,9 @@ export default function NavBar() {
 
   if (!isLoaded) return null;
 
+  const buttonStyles =
+    "px-6 py-2 border border-emerald-500 text-emerald-500 font-medium rounded-full hover:bg-emerald-100 transition-all text-sm";
+
   return (
     <nav className="fixed top-0 left-0 w-full bg-white shadow-md z-50">
       <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
@@ -26,7 +29,7 @@ export default function NavBar() {
         {/* Links */}
         <div className="flex items-center gap-6">
           <Link
-            href="/sign-up"
+            href="/"
             className="text-gray-700 hover:text-emerald-600 transition-colors font-medium"
           >
             Home
@@ -65,18 +68,13 @@ export default function NavBar() {
 
             {/* Sign Out Button */}
             <SignOutButton>
-              <button className="px-6 py-2 border border-emerald-500 text-emerald-500 font-medium rounded-full hover:bg-emerald-100 transition-all text-sm">
-                Sign Out
-              </button>
+              <button className={buttonStyles}>Sign Out</button>
             </SignOutButton>
           </SignedIn>
 
           <SignedOut>
             {/* Sign Up Button */}
-            <Link
-              href="/sign-up"
-              className="px-6 py-2 border border-emerald-500 text-emerald-500 font-medium rounded-full hover:bg-emerald-100 transition-all text-sm"
-            >
+            <Link href="/sign-up" className={buttonStyles}>
               Sign Up
             </Link>
           </SignedOut>
