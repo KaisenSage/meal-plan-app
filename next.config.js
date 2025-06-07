@@ -8,6 +8,12 @@ const nextConfig = {
         port: "",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "pub-3009ba38fd504b0796168c30789aa113.r2.dev",
+        port: "",
+        pathname: "/**",
+      },
     ],
   },
   typescript: {
@@ -18,4 +24,4 @@ const nextConfig = {
   },
 };
 
-module.exports = nextConfig; // ✅ NO Clerk wrapper needed
+module.exports = nextConfig;

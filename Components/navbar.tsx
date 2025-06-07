@@ -11,13 +11,16 @@ export default function NavBar() {
   const emeraldButtonStyles =
     "flex items-center justify-center px-4 py-2 bg-emerald-500 text-white font-medium rounded-full hover:bg-emerald-600 transition-all text-sm";
 
+  // Use your Cloudflare logo URL directly
+  const logoUrl = "https://pub-3009ba38fd504b0796168c30789aa113.r2.dev/logo.png";
+
   return (
     <nav className="fixed top-0 left-0 w-full bg-white shadow-md z-50">
       <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
         {/* Logo - Always Visible */}
         <Link href="/">
           <Image
-            src="/logo.png"
+            src={logoUrl}
             alt="Meal Plan Logo"
             width={50}
             height={50}
