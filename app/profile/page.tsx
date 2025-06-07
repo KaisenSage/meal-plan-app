@@ -1,12 +1,11 @@
-// app/profile/page.tsx
 "use client";
 
 import { useUser } from "@clerk/nextjs";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { availablePlans, Plan } from "@/lib/plans"; // Adjust the path based on your project structure
+import { availablePlans, Plan } from "@/lib/plans";
 import Image from "next/image";
 import { useState } from "react";
-import toast, { Toaster } from "react-hot-toast"; // Import toast
+import toast, { Toaster } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { Spinner } from "@/Components/spinner";
 
@@ -15,7 +14,6 @@ export default function ProfilePage() {
   const queryClient = useQueryClient();
   const router = useRouter();
 
-  // State to manage selected priceId
   const [selectedPlan, setSelectedPlan] = useState<string>("");
 
   // Fetch Subscription Details
@@ -35,20 +33,20 @@ export default function ProfilePage() {
       return res.json();
     },
     enabled: isLoaded && isSignedIn,
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 5 * 60 * 1000,
   });
 
-  // Adjusted Matching Logic Using priceId
+  // FIX: Match plan by unique priceId (or correct identifier)
+  const subscriptionPlanId = subscription?.subscription?.subscription_tier;
   const currentPlan = availablePlans.find(
-    (plan) => plan.interval === subscription?.subscription?.subscription_tier
+    (plan) =>
+      plan.priceId === subscriptionPlanId ||
+      plan.id === subscriptionPlanId ||
+      plan.interval === subscriptionPlanId // fallback for old logic
   );
 
   // Mutation: Change Subscription Plan
-  const changePlanMutation = useMutation<
-    any, // Replace with actual response type if available
-    Error,
-    string // The newPriceId
-  >({
+  const changePlanMutation = useMutation<any, Error, string>({
     mutationFn: async (newPlan: string) => {
       const res = await fetch("/api/profile/change-plan", {
         method: "POST",
@@ -65,7 +63,6 @@ export default function ProfilePage() {
       }
       return res.json();
     },
-
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["subscription"] });
       toast.success("Subscription plan updated successfully.");
@@ -76,11 +73,7 @@ export default function ProfilePage() {
   });
 
   // Mutation: Unsubscribe
-  const unsubscribeMutation = useMutation<
-    any, // Replace with actual response type if available
-    Error,
-    void
-  >({
+  const unsubscribeMutation = useMutation<any, Error, void>({
     mutationFn: async () => {
       const res = await fetch("/api/profile/unsubscribe", {
         method: "POST",
@@ -91,7 +84,6 @@ export default function ProfilePage() {
       }
       return res.json();
     },
-
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["subscription"] });
       router.push("/subscribe");
@@ -101,7 +93,6 @@ export default function ProfilePage() {
     },
   });
 
-  // Handler for confirming plan change
   const handleConfirmChangePlan = () => {
     if (selectedPlan) {
       changePlanMutation.mutate(selectedPlan);
@@ -109,7 +100,6 @@ export default function ProfilePage() {
     }
   };
 
-  // Handle Change Plan Selection with Confirmation
   const handleChangePlan = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newSelectedPlan = e.target.value;
     if (newSelectedPlan) {
@@ -117,7 +107,6 @@ export default function ProfilePage() {
     }
   };
 
-  // Handle Unsubscribe Button Click
   const handleUnsubscribe = () => {
     if (
       confirm(
@@ -128,7 +117,6 @@ export default function ProfilePage() {
     }
   };
 
-  // Loading or Not Signed In States
   if (!isLoaded) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-emerald-100">
@@ -146,17 +134,15 @@ export default function ProfilePage() {
     );
   }
 
-  // Main Profile Page UI
   return (
     <div className="min-h-screen flex items-center justify-center bg-emerald-100 p-4">
-      <Toaster position="top-center" />{" "}
-      {/* Optional: For toast notifications */}
+      <Toaster position="top-center" />
       <div className="w-full max-w-5xl bg-white shadow-lg rounded-lg overflow-hidden">
         <div className="flex flex-col md:flex-row">
           {/* Left Panel: Profile Information */}
           <div className="w-full md:w-1/3 p-6 bg-emerald-500 text-white flex flex-col items-center">
             <Image
-              src={user.imageUrl || "/default-avatar.png"} // Provide a default avatar if none
+              src={user.imageUrl || "/default-avatar.png"}
               alt="User Avatar"
               width={100}
               height={100}
@@ -166,7 +152,6 @@ export default function ProfilePage() {
               {user.firstName} {user.lastName}
             </h1>
             <p className="mb-4">{user.primaryEmailAddress?.emailAddress}</p>
-            {/* Add more profile details or edit options as needed */}
           </div>
 
           {/* Right Panel: Subscription Details */}
@@ -206,7 +191,7 @@ export default function ProfilePage() {
                       </p>
                     </>
                   ) : (
-                    <p className="text-red-500">.</p>
+                    <p className="text-red-500">No matching plan found.</p>
                   )}
                 </div>
 
@@ -217,7 +202,7 @@ export default function ProfilePage() {
                   </h3>
                   <select
                     onChange={handleChangePlan}
-                    defaultValue={currentPlan?.interval}
+                    defaultValue={currentPlan?.priceId || currentPlan?.id || ""}
                     className="w-full px-3 py-2 border border-emerald-300 rounded-md text-black focus:outline-none focus:ring-2 focus:ring-emerald-400"
                     disabled={changePlanMutation.isPending}
                   >
@@ -225,7 +210,7 @@ export default function ProfilePage() {
                       Select a new plan
                     </option>
                     {availablePlans.map((plan, key) => (
-                      <option key={key} value={plan.interval}>
+                      <option key={key} value={plan.priceId || plan.id}>
                         {plan.name} - ${plan.amount} / {plan.interval}
                       </option>
                     ))}
