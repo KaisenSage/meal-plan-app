@@ -1,118 +1,121 @@
-'use client';
+"use client";
 
-import { useUser } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { availablePlans } from "@/lib/plans";
-import toast, { Toaster } from "react-hot-toast";
-import { initializePayment as makePayment } from "@/lib/flutterwave";
+import Link from "next/link";
+import Image from "next/image";
+import { FaInstagram, FaWhatsapp, FaEnvelope } from 'react-icons/fa'; // Updated imports
 
-
-export default function SubscribePage() {
-  const { user } = useUser();
-  const router = useRouter();
-  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
-
-  const handleSubscribe = async (planType: string) => {
-    if (!user?.id || !user?.emailAddresses?.[0]?.emailAddress || !user.fullName) {
-      router.push("/sign-up");
-      return;
-    }
-
-    try {
-      setLoadingPlan(planType);
-      toast.loading("Initializing payment...", { id: "checkout" });
-
-      const selectedPlan = availablePlans.find((plan) => plan.interval === planType);
-      if (!selectedPlan) throw new Error("Invalid plan selected");
-
-      await makePayment({
-        amount: selectedPlan.amount,
-        email: user.emailAddresses[0].emailAddress,
-        name: user.fullName,
-      });
-
-      toast.success("Payment successful!", { id: "checkout" });
-    } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : String(error),
-        { id: "checkout" }
-      );
-    } finally {
-      setLoadingPlan(null);
-    }
-  };
-
+export default function HomePage() {
   return (
-    <div className="px-4 py-8 sm:py-12 lg:py-16">
-      <Toaster position="top-right" />
-      <div>
-        <h2 className="text-3xl font-bold text-center mt-12 sm:text-5xl tracking-tight">
-          Pricing
-        </h2>
-        <p className="max-w-3xl mx-auto mt-4 text-xl text-center">
-          Get started on our weekly plan or upgrade to monthly or yearly when you are ready.
+    <div className="px-4 py-8 sm:py-12 lg:py-16 max-w-7xl mx-auto">
+      {/* Hero Section */}
+      <section className="bg-gradient-to-r from-emerald-400 to-emerald-600 text-white rounded-lg mb-12 p-8 text-center">
+        <h1 className="text-4xl font-bold mb-4">Personalized AI Meal Plans</h1>
+        <p className="text-xl mb-6">
+          Let our AI do the planning. You focus on cooking and enjoying!
         </p>
-      </div>
+        <Link
+          href="/sign-up"
+          className="inline-block bg-white text-emerald-500 font-medium px-5 py-3 rounded hover:bg-gray-100 transition-colors"
+        >
+          Get Started
+        </Link>
+      </section>
 
-      <div className="mt-12 container mx-auto space-y-12 lg:space-y-0 lg:grid lg:grid-cols-3 lg:gap-x-8">
-        {availablePlans.map((plan, key) => (
-          <div
-            key={key}
-            className="relative p-8 border border-gray-200 rounded-2xl shadow-sm flex flex-col hover:shadow-md hover:scale-[1.02] transition-transform duration-200 ease-out"
-          >
-            <div className="flex-1">
-              {plan.isPopular && (
-                <p className="absolute top-0 py-1.5 px-4 bg-emerald-500 text-white rounded-full text-xs font-semibold uppercase tracking-wide transform -translate-y-1/2">
-                  Most popular
-                </p>
-              )}
-              <h3 className="text-xl font-semibold">{plan.name}</h3>
-              <p className="mt-4 flex items-baseline">
-                <span className="text-5xl font-extrabold tracking-tight">
-                  ${plan.amount}
-                </span>
-                <span className="ml-1 text-xl font-semibold">/{plan.interval}</span>
+      {/* How It Works Section */}
+      <section className="bg-white py-20">
+        <div className="max-w-6xl mx-auto px-6 text-center">
+          <h2 className="text-4xl font-bold text-gray-800 mb-4">How It Works</h2>
+          <p className="text-lg text-gray-500 mb-12">
+            AI-powered meal planning that saves time, reduces stress, and helps you hit your goals.
+          </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+            {/* Step 1 */}
+            <div className="bg-gray-50 p-8 rounded-xl shadow hover:shadow-md transition">
+              <div className="text-emerald-500 text-4xl font-bold mb-4">1</div>
+              <h3 className="text-xl font-semibold mb-2">Create Your Profile</h3>
+              <p className="text-gray-600">
+                Share your dietary needs, fitness goals, and preferences with ease.
               </p>
-              <p className="mt-6">{plan.description}</p>
-              <ul role="list" className="mt-6 space-y-4">
-                {plan.features.map((feature, index) => (
-                  <li key={index} className="flex">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="flex-shrink-0 w-6 h-6 text-emerald-500"
-                    >
-                      <polyline points="20 6 9 17 4 12" />
-                    </svg>
-                    <span className="ml-3">{feature}</span>
-                  </li>
-                ))}
-              </ul>
             </div>
 
-            <button
-              className={`${
-                plan.interval === "month"
-                  ? "bg-emerald-500 text-white hover:bg-emerald-600"
-                  : "bg-emerald-100 text-emerald-700 hover:bg-emerald-200"
-              } mt-8 block w-full py-3 px-6 border border-transparent rounded-md text-center font-medium disabled:bg-gray-400 disabled:cursor-not-allowed`}
-              onClick={() => handleSubscribe(plan.interval)}
-              disabled={loadingPlan === plan.interval}
-            >
-              {loadingPlan === plan.interval
-                ? "Processing..."
-                : `Subscribe ${plan.name}`}
-            </button>
+            {/* Step 2 */}
+            <div className="bg-gray-50 p-8 rounded-xl shadow hover:shadow-md transition">
+              <div className="text-emerald-500 text-4xl font-bold mb-4">2</div>
+              <h3 className="text-xl font-semibold mb-2">AI Generates Your Plan</h3>
+              <p className="text-gray-600">
+                Our intelligent system designs a weekly meal plan tailored just for you.
+              </p>
+            </div>
+
+            {/* Step 3 */}
+            <div className="bg-gray-50 p-8 rounded-xl shadow hover:shadow-md transition">
+              <div className="text-emerald-500 text-4xl font-bold mb-4">3</div>
+              <h3 className="text-xl font-semibold mb-2">Follow Your Plan</h3>
+              <p className="text-gray-600">
+                Enjoy delicious meals, simple recipes, and an organized grocery list.
+              </p>
+            </div>
           </div>
-        ))}
+        </div>
+      </section>
+
+      {/* MealPlan Pro Section */}
+      <section className="bg-gray-100 py-20">
+        <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-10">
+          {/* Text Content */}
+          <div className="md:w-1/2">
+            <h2 className="text-4xl font-bold text-gray-800 mb-4">
+              MealPlan <span className="text-emerald-600">Pro</span>
+            </h2>
+            <p className="text-gray-600 mb-6">
+              For health & fitness professionals. Streamline meal planning, deliver
+              results, and scale your business faster.
+            </p>
+          </div>
+
+          {/* Image */}
+          <div className="md:w-1/2">
+            <img
+              src="https://www.eatthismuch.com/_app/immutable/assets/ios-app-eatthismuch.C4RTd9d9.webp"
+              alt="MealPlan Pro Mobile"
+              className="w-full rounded-xl shadow-md"
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* Footer Section */}
+      <div className="my-5">
+        <footer className="footer">
+          {/* Logo Above Socials */}
+          <div className="flex items-center gap-3 mb-2">
+            <Image
+              src="https://pub-323e019863a3440ba6f23aaf494422d3.r2.dev/ChatGPT%20Image%20Sep%2020%2C%202025%20at%2009_08_23%20AM.png"
+              width={80}
+              height={80}
+              className="mb-2"
+              alt="PlanEats Logo"
+            />
+          </div>
+          {/* Bottom Section */}
+          <div className="footer-bottom">
+            <div className="footer-socials">
+              <a href="https://wa.me/2348182006156" target="_blank" rel="noopener noreferrer" className="footer-social-link">
+                <FaWhatsapp size={24} />
+              </a>
+              <a href="mailto:contact.codewithsage@gmail.com" target="_blank" rel="noopener noreferrer" className="footer-social-link">
+                <FaEnvelope size={24} />
+              </a>
+              <a href="https://www.instagram.com/codewithsage/" target="_blank" rel="noopener noreferrer" className="footer-social-link">
+                <FaInstagram size={24} />
+              </a>
+            </div>
+            <p className="footer-copyright">
+              &copy; {new Date().getFullYear()} PlanEats. All rights reserved.
+            </p>
+          </div>
+        </footer>
       </div>
     </div>
   );
